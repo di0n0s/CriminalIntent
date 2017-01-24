@@ -8,7 +8,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ import java.util.List;
 public class CrimeListFragment extends Fragment {
 
     private RecyclerView mCrimeRecyclerView;
+    private CrimeAdapter mAdapter;
 
     @Nullable
     @Override
@@ -28,19 +31,51 @@ public class CrimeListFragment extends Fragment {
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        updateUI();
+
         return view;
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder{ //Creamos el ViewHolder
+    private void updateUI(){
+        CrimeLab crimeLab = CrimeLab.get(getActivity());
+        List<Crime> crimes = crimeLab.getCrimes();
 
-        public TextView mTitleTextView;
+        mAdapter = new CrimeAdapter(crimes);
+        mCrimeRecyclerView.setAdapter(mAdapter);
+
+    }
+
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{ //Creamos el ViewHolder
+
+        private TextView mTitleTextView;
+        private TextView mDateTextView;
+        private CheckBox mSolvedCheckBox;
+
+        private Crime mCrime;
+
 
         public CrimeHolder(View itemView) {
             super(itemView);
 
-            mTitleTextView = (TextView) itemView;
+            itemView.setOnClickListener(this); //Configuramos CrimeHolder como el receptor de los eventos táctiles
+
+            mTitleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
+            mDateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
+            mSolvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
         }
 
+        public void bindCrime(Crime crime){
+            mCrime = crime;
+            mTitleTextView.setText(mCrime.getTitle());
+            mDateTextView.setText(mCrime.getDate().toString());
+            mSolvedCheckBox.setChecked(mCrime.isSolved());
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(getActivity(), mCrime.getTitle()+" cliked!", Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{ //Creamos el Adapter
@@ -54,17 +89,21 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public CrimeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return null;
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity()); //Cargamos el "inflador"
+            View view = layoutInflater.inflate(R.layout.list_item_crime, parent, false); //Creamos una vista. Desplegamos un layout que contiene una sola vista
+            return new CrimeHolder(view); //Devolvemos la vista encapsulada en el ViewHolder
         }
 
         @Override
         public void onBindViewHolder(CrimeHolder holder, int position) {
+            Crime crime = mCrimes.get(position); //Guarda en crime el crime del listado respecto a la posición que le pasamos
+            holder.bindCrime(crime); //Enlazamos una vista de un ViewHolder a un objeto de Crime
 
         }
 
         @Override
-        public int getItemCount() {
-            return 0;
+        public int getItemCount() { //Devuelve el tamaño de la lista
+            return mCrimes.size();
         }
     }
 
