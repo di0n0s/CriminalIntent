@@ -10,7 +10,7 @@ import java.util.UUID;
  * Created by sfcar on 14/01/2017.
  */
 
-public class CrimeLab {
+public class CrimeLab { //Singleton
 
     private static CrimeLab sCrimeLab;  //prefijo s para indicar que es una variable estática
     private List<Crime> mCrimes;

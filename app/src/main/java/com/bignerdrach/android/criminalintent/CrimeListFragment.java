@@ -1,5 +1,6 @@
 package com.bignerdrach.android.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -73,7 +74,10 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), mCrime.getTitle()+" cliked!", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), mCrime.getTitle()+" cliked!", Toast.LENGTH_SHORT).show();
+
+            Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId()); //Llamamos al método newIntent para generar un intent explicito pasandole el contexto y el ID del Crime
+            startActivity(intent); //Abre una nueva CrimeActivity
 
         }
     }
