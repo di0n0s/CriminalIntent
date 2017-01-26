@@ -21,6 +21,8 @@ import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
+    private static final String ARG_CRIME_ID = "crime_id";
+
     private Crime mCrime;
     private EditText mTittleField;
     private Button mDateButton;
@@ -31,8 +33,7 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //mCrime = new Crime();
 
-        UUID crimeId = (UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.EXTRA_CRIME_ID);
-        //Recuperamos el extra (ID) desde el código de la activity.
+        UUID crimeId = (UUID) getArguments().getSerializable(ARG_CRIME_ID);//Recuperamos los argumentos del fragment.
         mCrime = CrimeLab.get(getActivity()).getCrime(crimeId); //Recuperado, lo utilizamos para buscar el Crime en el Singleton
     }
 
@@ -75,5 +76,14 @@ public class CrimeFragment extends Fragment {
         });
 
         return v;
+    }
+
+    public static CrimeFragment newInstance(UUID crimeId){
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_CRIME_ID, crimeId); //Creamos un conjunto de argumentos
+
+        CrimeFragment fragment = new CrimeFragment(); //Creamos una instancia del fragment
+        fragment.setArguments(args); //Añadimos los argumentos
+        return fragment; //Devolvemos el fragment
     }
 }
